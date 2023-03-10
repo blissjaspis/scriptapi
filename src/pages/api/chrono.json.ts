@@ -2,14 +2,13 @@ import type { APIRoute } from "astro"
 import * as chrono from "chrono-node"
 
 export const post: APIRoute = async ({ request }) => {
-    const body = await request.formData()
+    const body = await request.json()
 
-    if (body.has("time")) {
-        const time = body.get("time") ?? "now"
-        const text = chrono.parse(time.toString())
-        const result = chrono.parseDate(text[0].text)
-
+    if (body.time) {
+        const text = chrono.parse(body.time)
         try {
+            const result = chrono.parseDate(text[0].text)
+
             return {
                 body: JSON.stringify({
                     message: "Success loaded time",
@@ -18,9 +17,8 @@ export const post: APIRoute = async ({ request }) => {
                 }),
             }
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
-
     }
 
     return new Response(null, { status: 400 })
